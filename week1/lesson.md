@@ -34,5 +34,135 @@ Computers do calculations, and the fundamental starting spot for us is calculati
 
 * ```%``` This is the modulo or mod operator. It divides two numbers and returns the remainder. So ```5 % 2``` would be ```1``` because 5 can be divided by 2 with one remaining. The mod operator is really valuable for math tricks. 
 
-* ```<<, >>``` These are bitwise operators and they shift bits. We won't use them in this class, but here's how they work: the number one in decimal is the same as 0001 in binary. If we use the bitwise operator  ```1 << 2```, we are telling the computer to take 1 and shift its bits left by 2 places. So 0001 becomes 0100, which is 4 in decimal. Likewise, ``` 4 >> 1 ``` tells the computer to take 4 (0100) and shift its bits right by 1 place. So 0100 becomes 0010, which is 2 in decimal. There are several other bitwise operators, and they are useful because computationally complex operations like finding powers of 2 or square roots can be done more easily by performing the operation bitwise in binary. 
+* ```=``` This is an assignment operator. It says take whatever is on the right side and assign it to the variable on the left. If there are any operations on the right side of the operator, those are performed first. So ```y = 2 * 2``` would calculate 2 times two FIRST and then assign the result to the variable "y".
 
+* ```<<, >>, &, |, ~, ^``` These are bitwise operators and they perform operations on the string of bits that represents a value. We won't use them in this class, but they are pretty cool, and you can do clever tricks to make your program much more efficient.
+
+## Variables
+
+If we do a calculation in our program, the computer does not automatically save the output of that calculation. For instance, if we calculate ```2 * 2``` the calculation "returns" or outputs 4, obviously, but once the computer moves on to the next instruction, it immediately discards that value of 4 unless we happened to tell the computer to write that value to memory. 
+
+### Volatile and Non-volatile Memory
+
+Generally, when you save a file on your computer, you are saving it to what is called non-volatile memory. The data is written to a "disk" of some sort where it is saved permanently unless you delete or overwrite it. Non-volatile means that the data is not lost when we turn off the computer.
+
+However, when writing programs, whenever we store data with variables we are storing them to volatile memory. Volatile memory is generally when you know as RAM. If your computer has 16GB of RAM, that means that there are 16 billion bits of storage space at any given time. A bit is a unit of memory that can hold a 0 or a 1. For funsies, my name, Dylan, when converted to binary looks like this: ```01000100 01111001 01101100 01100001 01101110```One set of 8 bits for each letter, so my name takes requires 40 bits. The thing about RAM is that while it is a lot faster than non-volatile memory, it will save your data until the sector is marked for deletion or when the computer loses power. If you have ever written a document and had the power go out before you saved and you lost a bunch of work, that is because the work was stored in RAM but had not been written to non-volatile storage. 
+
+Volatile and non-volatile matter a little to us. If we want our programs to store data between runs or from session to session, we need some way to write that data to non-volatile storage. More important for understanding variables is that our variables are little more than names that point to addresses of memory. Let me explain this a bit more. My computer has 16GB of memory. That's a lot of 0's and 1's. How does our computer ever find anything? Well, that memory is organized by addresses. Our operating system is in charge of this, and if you've ever wondered the difference between a 32 and 64 bit operating system, that refers to the difference in the size of each address. Think of it as a map of a city, each "building" has an address, which tells us where in the city to find that building. The same is true for our memory in our computer. The operating system manages a map of the memory. When we create a variable, the operating system locates a free sector of memory of sufficient size and associates the variable name with that memory address. When we use that variable later to get the data we stored, the operating system retrieves the data stored at that address and allows us to do something with it. Let me give you an example with some notes in code:
+
+```python
+first_name = "Dylan"  # this line creates a variable called first_name. 
+                      # The OS then finds a sector of memory large enough
+                      # to fit 01000100 01111001 01101100 01100001 01101110
+                      # and associates the variable name: first_name with 
+                      # that address. If I were to inspect the contents of 
+                      # my RAM, I would find that value at the corresponding
+                      # address. 
+print(first_name[0])  # this line tells the computer to access data stored at
+                      # the address associated with first_name. Then it uses
+                      # string slicing to get the first character of that value
+                      # and then it passes that character to the built in 
+                      # function print(), which displays on the screen whatever
+                      # value is given to it in side the parentheses. So when 
+                      # the computer executes this line, "D" will be printed
+                      # to the screen.
+first_name = "Daniel" # This line will now tell the computer to find the 
+                      # address identified by first_name and replace whatever
+                      # was stored in that sector of memory with the word 
+                      # "Daniel". If I looked at the contents of the memory 
+                      # at the address identified by first_name after this line
+                      # is executed, I would find the contents is no longer the 
+                      # binary for "Dylan", but instead is the binary for 
+                      # "Daniel" and the data "Dylan" is totally lost. 
+```
+
+NOW, this is a long discussion, but I think it is important to understand what is going on under the hood when you use variables in Python. Whenever you create a variable, or a function, or any other named entity, Python stores that value/code/class/etc. to a sector of memory that is identified by the name you give it. 
+
+## Functions
+
+Variables are not the only named entities. Variables store data or values, but let's say you have a set of instructions or code that you want to repeat a whole bunch of times. For example, let's say you've been given the task of finding the most common word in each document within a sequence of documents. If you wanted to do this for one document the code might look like this:
+
+```python
+with open("the_document.docx") as f: # this line opens the file.
+    max = 0
+    max_word = ""
+    text = f.read() # this line reads the file
+    for word in text.split(" "): # this gets a list of all the words
+        if text.count(word) > max: # if the count of the word is greater than the max, we have a new max. 
+            max = text.count(word)
+            max_word = word
+    
+print(max_word, max) # print the result because why not.
+```
+
+Now if I wanted to do this with a bunch of files, I'd have to manually change the name "the_document.docx" to each file in the list and then either run the code again or copy the code with the new file name. Like so:
+
+```python
+with open("document1.docx") as f: # this line opens the file.
+    max = 0
+    max_word = ""
+    text = f.read() # this line reads the file
+    for word in text.split(" "): # this gets a list of all the words
+        if text.count(word) > max: # if the count of the word is greater than the max, we have a new max. 
+            max = text.count(word)
+            max_word = word
+    
+print(max_word, max) # print the result because why not.
+
+with open("document2.docx") as f: # this line opens the file.
+    max = 0
+    max_word = ""
+    text = f.read() # this line reads the file
+    for word in text.split(" "): # this gets a list of all the words
+        if text.count(word) > max: # if the count of the word is greater than the max, we have a new max. 
+            max = text.count(word)
+            max_word = word
+    
+print(max_word, max) # print the result because why not.
+```
+
+That's a bad practice because I have a lot of code copied and pasted. Instead, I could create a **function** which is a named entity that is a collection of instructions. Each function has an input, it has the instructions, and it has an output. So let me refactor my code so it can be used as a function:
+
+```python
+def get_max_word(filename):
+    with open(filename) as f:
+        max = 0
+        max_word = ""
+        text = f.read() # this line reads the file
+        for word in text.split(" "): # this gets a list of all the words
+            if text.count(word) > max: # if the count of the word is greater than the max, we have a new max. 
+                max = text.count(word)
+                max_word = word
+
+    return (max_word, max)
+```
+
+The first line tells the computer that this is a function that needs to be stored in memory. The name of the function is ```get_max_word```. The input is ```filename```. Finally, instead of printing the max word and count, it returns those values so that I can use them elsewhere. Now, if I want to run this on a bunch of files with the same output as above, my code might look like this:
+
+```python
+def get_max_word(filename):
+    with open(filename) as f:
+        max = 0
+        max_word = ""
+        text = f.read() # this line reads the file
+        for word in text.split(" "): # this gets a list of all the words
+            if text.count(word) > max: # if the count of the word is greater than the max, we have a new max. 
+                max = text.count(word)
+                max_word = word
+
+    return (max_word, max)
+
+print(get_max_word("document1.docx"))
+print(get_max_word("document2.docx"))
+print(get_max_word("document3.docx"))
+print(get_max_word("document4.docx"))
+print(get_max_word("document5.docx"))
+```
+
+On the last five lines, the code saved as get_max_word is run on each of the 5 files. The output of tha function (max_word, max) is then printed to the screen. Any time you have a set of instructions that needs to be executed many times, it's a good idea to consider how you might use a function. it makes the code neater. Also, if I want to change how the instructions work, like make the instruction non-case-sensitive, I only need to change the code in one place. 
+
+## Conclusion   
+
+These are the main types of named entities. There are also Classes, but we'll move on to that in the future. Named entities are variables or functions that the computer stores in volatile memory. They are simply names that point to addresses in memory in which the value or instructions are stored. We use those human readable names to easily retrieve the stored stuff later in our program. 
+
+        
